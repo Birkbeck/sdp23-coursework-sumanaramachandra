@@ -4,8 +4,9 @@ package sml;
 
 /**
  * Represents an abstract instruction.
- *
- * @author ...
+ * An abstract instruction class that defines the concrete methods for executing instructions.
+ * Each instruction has a label and an opcode, indicating the operation to be performed.
+ *  @author Sumana Ramachandra
  */
 public abstract class Instruction {
 	protected final String label;
@@ -50,8 +51,17 @@ public abstract class Instruction {
 
 	// TODO: What does abstract in the declaration below mean?
 	//       (Write a short explanation.)
+	/*An abstract method declaration of toString would require all its subclasses to provide implementation.
+	Thus ensuring that all the subclasses of this class contains a method 'toString' with their own implementation
+	that returns a string format of the object/value provided to it.
+	*/
 	@Override
 	public abstract String toString();
 
 	// TODO: Make sure that subclasses also implement equals and hashCode (needed in class Machine).
+	@Override
+	public abstract boolean equals(Object o);
+
+	@Override
+	public abstract int hashCode();
 }
