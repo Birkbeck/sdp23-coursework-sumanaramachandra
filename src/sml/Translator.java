@@ -15,7 +15,7 @@ import static sml.Registers.Register;
  * <p>
  * The translator of a <b>S</b><b>M</b>al<b>L</b> program.
  *
- * @author ...
+ * @author Sumana Ramachandra
  */
 public final class Translator {
 
@@ -32,7 +32,7 @@ public final class Translator {
     // prog (the program)
     // return "no errors were detected"
 
-    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException {
+    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException, NullPointerException, IllegalArgumentException {
         try (var sc = new Scanner(new File(fileName), StandardCharsets.UTF_8)) {
             labels.reset();
             program.clear();
@@ -73,7 +73,41 @@ public final class Translator {
                 return new AddInstruction(label, Register.valueOf(r), Register.valueOf(s));
             }
 
-            // TODO: add code for all other types of instructions
+            // TODO: add code for all other types of instructions [completed]
+            case MovInstruction.OP_CODE -> {
+                String r = scan();
+                int val = Integer.parseInt(scan());
+                return new MovInstruction(label, Register.valueOf(r), val);
+            }
+
+            case SubInstruction.OP_CODE -> {
+                String r = scan();
+                String s = scan();
+                return new SubInstruction(label, Register.valueOf(r), Register.valueOf(s));
+            }
+
+            case MulInstruction.OP_CODE -> {
+                String r = scan();
+                String s = scan();
+                return new MulInstruction(label, Register.valueOf(r), Register.valueOf(s));
+            }
+
+            case DivInstruction.OP_CODE -> {
+                String r = scan();
+                String s = scan();
+                return new DivInstruction(label, Register.valueOf(r), Register.valueOf(s));
+            }
+
+            case JnzInstruction.OP_CODE -> {
+                String r = scan();
+                String jmp = scan();
+                return new JnzInstruction(label, Register.valueOf(r), jmp);
+            }
+
+            case OutInstruction.OP_CODE -> {
+                String r = scan();
+                return new OutInstruction(label, Register.valueOf(r));
+            }
 
             // TODO: Then, replace the switch by using the Reflection API
 

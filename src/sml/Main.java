@@ -31,5 +31,11 @@ public class Main {
 		catch (IOException e) {
 			System.out.println("Error reading the program from " + args[0]);
 		}
+		catch (NullPointerException n){
+			System.out.println(n.getMessage());
+		}
+		catch(IllegalArgumentException i){
+			System.out.println(i.getMessage());
+		}
 	}
 }
