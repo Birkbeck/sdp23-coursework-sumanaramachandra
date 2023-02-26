@@ -68,6 +68,7 @@ public final class Translator {
         if (line.isEmpty())
             return null;
 
+        // TODO: Then, replace the switch by using the Reflection API [completed]
         String opcode = scan();
         String sub = opcode.substring(0,1).toUpperCase() + opcode.substring(1);
 
