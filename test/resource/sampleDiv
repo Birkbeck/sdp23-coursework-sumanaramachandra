@@ -1,0 +1,3 @@
+mov EAX 200
+mov EBX 20
+div EAX EBX
