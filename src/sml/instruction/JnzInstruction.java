@@ -35,7 +35,7 @@ public class JnzInstruction extends Instruction {
 
     @Override
     public String toString() {
-        return getLabelString() + getOpcode() + " " + result + " " + label;
+        return getLabelString() + getOpcode() + " " + result + " " + jmpLabel;
     }
 
     @Override
