@@ -3,11 +3,12 @@ package sml;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO: write a JavaDoc for the class
+// TODO: write a JavaDoc for the class [completed]
 
 /**
- *
- * @author ...
+ * Represents Registers class
+ * Every register has a name and value associated with it
+ * @author Sumana Ramachandra
  */
 public final class Registers {
     private final Map<Register, Integer> registers = new HashMap<>();
@@ -45,12 +46,11 @@ public final class Registers {
         return registers.get((Register)register);
     }
 
-    // TODO: use pattern matching for instanceof
+    // TODO: use pattern matching for instanceof [completed]
     // https://docs.oracle.com/en/java/javase/14/language/pattern-matching-instanceof-operator.html
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Registers) {
-            Registers other = (Registers) o;
+        if (o instanceof Registers other) {
             return registers.equals(other.registers);
         }
         return false;
