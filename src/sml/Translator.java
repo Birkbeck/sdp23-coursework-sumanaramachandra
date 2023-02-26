@@ -4,6 +4,9 @@ import sml.instruction.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
@@ -32,7 +35,7 @@ public final class Translator {
     // prog (the program)
     // return "no errors were detected"
 
-    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException, NullPointerException, IllegalArgumentException {
+    public void readAndTranslate(Labels labels, List<Instruction> program) throws IOException, NullPointerException, IllegalArgumentException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         try (var sc = new Scanner(new File(fileName), StandardCharsets.UTF_8)) {
             labels.reset();
             program.clear();
@@ -61,66 +64,39 @@ public final class Translator {
      * The input line should consist of a single SML instruction,
      * with its label already removed.
      */
-    private Instruction getInstruction(String label) {
+    private Instruction getInstruction(String label) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         if (line.isEmpty())
             return null;
 
         String opcode = scan();
-        switch (opcode) {
-            case AddInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new AddInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        String sub = opcode.substring(0,1).toUpperCase() + opcode.substring(1);
 
-            // TODO: add code for all other types of instructions [completed]
-            case MovInstruction.OP_CODE -> {
-                String r = scan();
-                int val = Integer.parseInt(scan());
-                return new MovInstruction(label, Register.valueOf(r), val);
-            }
+        Class<?> insClass = Class.forName("sml.instruction." + sub + "Instruction");
+        Constructor<?>[] constructors = insClass.getConstructors();
 
-            case SubInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new SubInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
+        Parameter[] p = constructors[0].getParameters();
+        Object[] cons = findParams(p);
+        cons[0] = label;
 
-            case MulInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new MulInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
-
-            case DivInstruction.OP_CODE -> {
-                String r = scan();
-                String s = scan();
-                return new DivInstruction(label, Register.valueOf(r), Register.valueOf(s));
-            }
-
-            case JnzInstruction.OP_CODE -> {
-                String r = scan();
-                String jmp = scan();
-                return new JnzInstruction(label, Register.valueOf(r), jmp);
-            }
-
-            case OutInstruction.OP_CODE -> {
-                String r = scan();
-                return new OutInstruction(label, Register.valueOf(r));
-            }
-
-            // TODO: Then, replace the switch by using the Reflection API
-
-            // TODO: Next, use dependency injection to allow this machine class
-            //       to work with different sets of opcodes (different CPUs)
-
-            default -> {
-                System.out.println("Unknown instruction: " + opcode);
-            }
-        }
-        return null;
+        return (Instruction) constructors[0].newInstance(cons);
     }
 
+
+    private Object[] findParams(Parameter[] p) {
+        Object[] arg = new Object[p.length];
+        for(int i = 1;i < p.length; i++) {
+            String r = scan();
+            //System.out.println((p[i].getType().toString());
+            if (p[i].getType().toString().equals("int")) {
+                arg[i] = Integer.parseInt(r);
+            } else if (p[i].getType().toString().equals("interface sml.RegisterName")) {
+                arg[i] = Register.valueOf(r);
+            } else {
+                arg[i] = r;
+            }
+        }
+        return arg;
+    }
 
     private String getLabel() {
         String word = scan();

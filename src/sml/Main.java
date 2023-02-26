@@ -1,6 +1,7 @@
 package sml;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public class Main {
 	/**
@@ -33,9 +34,19 @@ public class Main {
 		}
 		catch (NullPointerException n){
 			System.out.println(n.getMessage());
-		}
-		catch(IllegalArgumentException i){
-			System.out.println(i.getMessage());
+		} catch(IllegalArgumentException i){
+			  System.out.println(i.getMessage());
+			  i.printStackTrace();
+		} catch(NoSuchMethodException i){
+			  System.out.println(i.getMessage());
+		} catch(InvocationTargetException i){
+			  System.out.println(i.getMessage());
+		} catch(InstantiationException i){
+			  System.out.println(i.getMessage());
+		} catch(IllegalAccessException i){
+			  System.out.println(i.getMessage());
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
