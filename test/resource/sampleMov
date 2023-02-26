@@ -1,0 +1,4 @@
+mov EAX 100
+mov EBX 200
+mov ECX 300
+mov EDX 600

@@ -1,0 +1,4 @@
+mov EAX 10
+mov EBX 1
+h1: sub EAX EBX
+jnz EAX h1
