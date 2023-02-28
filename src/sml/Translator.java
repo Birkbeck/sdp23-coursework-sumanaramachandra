@@ -1,17 +1,12 @@
 package sml;
 
-import sml.instruction.*;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static sml.Registers.Register;
 
 /**
  * This class ....
@@ -64,39 +59,20 @@ public final class Translator {
      * The input line should consist of a single SML instruction,
      * with its label already removed.
      */
-    private Instruction getInstruction(String label) throws InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private Instruction getInstruction(String label){
         if (line.isEmpty())
             return null;
 
-        // TODO: Then, replace the switch by using the Reflection API [completed]
+        // Moved the reflection API code and implemented an Instruction Factory class that now returns the instance of certain type
         String opcode = scan();
-        String sub = opcode.substring(0,1).toUpperCase() + opcode.substring(1);
 
-        Class<?> insClass = Class.forName("sml.instruction." + sub + "Instruction");
-        Constructor<?>[] constructors = insClass.getConstructors();
+        ArrayList<String> scanArgs = new ArrayList<>();
+        scanArgs.add(opcode);
+        scanArgs.add(scan());
+        scanArgs.add(scan());
 
-        Parameter[] p = constructors[0].getParameters();
-        Object[] cons = findParams(p);
-        cons[0] = label;
-
-        return (Instruction) constructors[0].newInstance(cons);
-    }
-
-
-    private Object[] findParams(Parameter[] p) {
-        Object[] arg = new Object[p.length];
-        for(int i = 1;i < p.length; i++) {
-            String r = scan();
-            //System.out.println((p[i].getType().toString());
-            if (p[i].getType().toString().equals("int")) {
-                arg[i] = Integer.parseInt(r);
-            } else if (p[i].getType().toString().equals("interface sml.RegisterName")) {
-                arg[i] = Register.valueOf(r);
-            } else {
-                arg[i] = r;
-            }
-        }
-        return arg;
+        InstructionFactory insFactory = new InstructionFactory();
+        return  insFactory.makeInstruction(opcode, label, scanArgs);
     }
 
     private String getLabel() {
