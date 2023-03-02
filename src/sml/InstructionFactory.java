@@ -1,7 +1,9 @@
 package sml;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 
@@ -16,26 +18,18 @@ public class InstructionFactory {
 
     public Instruction makeInstruction(String opcode, String label, ArrayList<String> scanArgs) {
         Instruction ins;
-        String sub = opcode.substring(0,1).toUpperCase() + opcode.substring(1);
         Class<?> insClass;
 
-        try {
-            insClass = Class.forName("sml.instruction." + sub + "Instruction");
-            Constructor<?>[] constructors = insClass.getConstructors();
-            Parameter[] p = constructors[0].getParameters();
-            Object[] cons = findParams(p, scanArgs);
-            cons[0] = label;
-            ins = (Instruction) constructors[0].newInstance(cons);
-            return ins;
-        }catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        ApplicationContext context = new ClassPathXmlApplicationContext("/instructionConfig.xml");
+        insClass = context.getType(opcode);
+        assert insClass != null;
+        Constructor<?>[] constructors = insClass.getConstructors();
+        Parameter[] p = constructors[0].getParameters();
+        Object[] cons = findParams(p, scanArgs);
+        cons[0] = label;
+
+        ins = (Instruction) context.getBean(opcode, cons);
+        return ins;
     }
 
     private Object[] findParams(Parameter[] p, ArrayList<String> scanArgs) {
