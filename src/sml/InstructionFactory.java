@@ -1,7 +1,6 @@
 package sml;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -20,7 +19,7 @@ public class InstructionFactory {
         Instruction ins;
         Class<?> insClass;
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("/instructionConfig.xml");
+        var context = new AnnotationConfigApplicationContext(InstructionConfig.class);
         insClass = context.getType(opcode);
         assert insClass != null;
         Constructor<?>[] constructors = insClass.getConstructors();
