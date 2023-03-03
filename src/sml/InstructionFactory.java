@@ -7,7 +7,7 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 
 /**
- * Represents an instruction factory class.
+ * Represents a singleton instruction factory class, restricts class instantiation to a single instance.
  * InstructionFactory class takes up the responsibility of creating and configuring objects of required type.
  * Returns newly created object.
  * @author Sumana Ramachandra
@@ -15,6 +15,20 @@ import java.util.ArrayList;
 
 public class InstructionFactory {
 
+    private static InstructionFactory instructionFactory;
+
+    private InstructionFactory() {
+        if(instructionFactory!=null){
+            throw new RuntimeException("Single instance possible. Use getInstructionFactory() method");
+        }
+    }
+
+    public static InstructionFactory getInstructionFactory(){
+        if(instructionFactory == null){
+            instructionFactory = new InstructionFactory();
+        }
+        return instructionFactory;
+    }
     public Instruction makeInstruction(String opcode, String label, ArrayList<String> scanArgs) {
         Instruction ins;
         Class<?> insClass;

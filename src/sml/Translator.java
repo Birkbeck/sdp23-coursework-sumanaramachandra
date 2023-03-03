@@ -71,7 +71,7 @@ public final class Translator {
         scanArgs.add(scan());
         scanArgs.add(scan());
 
-        InstructionFactory insFactory = new InstructionFactory();
+        InstructionFactory insFactory = InstructionFactory.getInstructionFactory();
         return  insFactory.makeInstruction(opcode, label, scanArgs);
     }
 
